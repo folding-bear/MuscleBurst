@@ -140,9 +140,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 10
   jumpPower: 38
-  high: 0
-  buttomPos: {fileID: 1198230967}
-  sole: {fileID: 1198230969}
+  buttomPos: {fileID: 1437034467}
+  sole: {fileID: 1437034468}
 --- !u!4 &42412266 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4763529862590892617, guid: b9b914ebdf2151542baef62b198e8824,
@@ -279,7 +278,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 10
   jumpPower: 0
-  high: 0
   buttomPos: {fileID: 0}
   sole: {fileID: 0}
 --- !u!50 &98494122
@@ -589,7 +587,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519420028}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -6.9849434, y: -1.1280446, z: -10}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -808,18 +806,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &1198230967 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1198230967, guid: e392e9a4fbb275e47a49765089d0f89a,
-    type: 3}
-  m_PrefabInstance: {fileID: 461638643}
-  m_PrefabAsset: {fileID: 0}
---- !u!61 &1198230969 stripped
-BoxCollider2D:
-  m_CorrespondingSourceObject: {fileID: 1198230969, guid: e392e9a4fbb275e47a49765089d0f89a,
-    type: 3}
-  m_PrefabInstance: {fileID: 461638643}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1202668879
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -830,7 +816,7 @@ PrefabInstance:
     - target: {fileID: 4763529862590892618, guid: b9b914ebdf2151542baef62b198e8824,
         type: 3}
       propertyPath: m_Name
-      value: "\u89D2\u8272"
+      value: "\u857E\u83F2\u59C6(Fillemu)"
       objectReference: {fileID: 0}
     - target: {fileID: 4763529862590892617, guid: b9b914ebdf2151542baef62b198e8824,
         type: 3}
@@ -1020,7 +1006,7 @@ PrefabInstance:
     - target: {fileID: 4763529861763286352, guid: b9b914ebdf2151542baef62b198e8824,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 7930.613
+      value: 9010.613
       objectReference: {fileID: 0}
     - target: {fileID: 4763529861019104137, guid: b9b914ebdf2151542baef62b198e8824,
         type: 3}
@@ -1035,10 +1021,22 @@ PrefabInstance:
     - target: {fileID: 4763529861019104137, guid: b9b914ebdf2151542baef62b198e8824,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 124041.266
+      value: 124761.266
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b9b914ebdf2151542baef62b198e8824, type: 3}
+--- !u!4 &1437034467 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4763529860749810469, guid: b9b914ebdf2151542baef62b198e8824,
+    type: 3}
+  m_PrefabInstance: {fileID: 1202668879}
+  m_PrefabAsset: {fileID: 0}
+--- !u!61 &1437034468 stripped
+BoxCollider2D:
+  m_CorrespondingSourceObject: {fileID: 4763529860749810468, guid: b9b914ebdf2151542baef62b198e8824,
+    type: 3}
+  m_PrefabInstance: {fileID: 1202668879}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1671375163
 GameObject:
   m_ObjectHideFlags: 3

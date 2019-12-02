@@ -11,7 +11,7 @@ public class Player : MonoBehaviour
     public float jumpPower;
 
     //public Raycast raycast;
-    public float high;
+    //public float high;
     public Transform buttomPos;
     public BoxCollider2D sole;
     private bool jumping;
@@ -59,7 +59,7 @@ public class Player : MonoBehaviour
     {
         if (GetComponent<Rigidbody2D>().velocity.x <= 0)
         {
-            animator.SetBool("走路", false);
+            animator.SetBool("跑步", false);
         }
         if (Input.GetKeyDown(KeyCode.Space) && !jumping)
         {
@@ -96,13 +96,13 @@ public class Player : MonoBehaviour
     {
         if (index == 0)
         {
-            animator.SetBool("走路", true);
+            animator.SetBool("跑步", true);
             transform.Translate(transform.right * Time.deltaTime * speed);
             transform.localScale = new Vector2(lookX, 0.25f);
         }
         else
         {
-            animator.SetBool("走路", true);
+            animator.SetBool("跑步", true);
             transform.Translate(transform.right * Time.deltaTime * -speed);
             transform.localScale = new Vector2(-lookX, 0.25f);
         }
