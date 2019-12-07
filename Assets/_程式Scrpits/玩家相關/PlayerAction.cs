@@ -36,14 +36,14 @@ public class PlayerAction : MonoBehaviour
     
     void Update()
     {
-
         Move();
+        //Debug.Log(rd2D.velocity.x);
         Squat();
         //Debug.Log(jumping);
     }
     private void FixedUpdate()
     {
-
+        
         Idle();
         Jump();
 
@@ -73,7 +73,7 @@ public class PlayerAction : MonoBehaviour
    
     private void Idle()
     {
-        if (rd2D.velocity.x <= 0)//停止移動就回到站立動畫
+        if (rd2D.velocity.x == 0)//停止移動就回到站立動畫
         {
             animator.SetBool("跑步", false);
         }
@@ -84,12 +84,14 @@ public class PlayerAction : MonoBehaviour
         {
             animator.SetBool("跑步", true);
             transform.Translate(transform.right * speed);
+            //rd2D.AddForce(transform.right * speed);
             transform.localScale = new Vector2(lookX, 0.25f);//角色面向右
         }
         if (Input.GetKey(KeyCode.A))
         {
             animator.SetBool("跑步", true);
             transform.Translate(transform.right * -speed);
+            //rd2D.AddForce(transform.right * -speed);
             transform.localScale = new Vector2(-lookX, 0.25f);//角色面向左
         }
        
