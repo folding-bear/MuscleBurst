@@ -26,13 +26,13 @@ public class PlayerAction : MonoBehaviour
     private float lookX;
     
     
+
     void Start()
     {
         lookX = transform.localScale.x;//存取自身的scale
         animator = GetComponent<Animator>();//存取Animator
         rd2D = GetComponent<Rigidbody2D>();//存取Rigidbody2D
     }
-
     
     void Update()
     {
@@ -45,7 +45,8 @@ public class PlayerAction : MonoBehaviour
     {
         
         Idle();
-        Jump();
+        
+        //Jump();
 
     }
     private void OnCollisionEnter2D(Collision2D collision)
@@ -107,30 +108,64 @@ public class PlayerAction : MonoBehaviour
             animator.SetBool("蹲下", false);
         }
     }
-    private void Jump()
+    public void Jump(int index)
     {
-
-        if (Input.GetKeyDown(KeyCode.W) && !jumping)
+        #region Mobile
+        if (index==0 && !jumping)
         {
-
             animator.SetBool("跳躍", true);
             jumping = true;
             rd2D.AddForce(transform.up * maxJumpPower, ForceMode2D.Impulse);
-
         }
-        else if (Input.GetKey(KeyCode.W) && jumping && !maxHeight)
-        {
-
+        else if(index==1 && jumping && !maxHeight)
+        { 
             if (rd2D.velocity.y > maxHigh)
             {
                 maxHeight = true;
             }
             rd2D.AddForce(transform.up * minJumpPower, ForceMode2D.Impulse);
         }
-        if (Input.GetKeyUp(KeyCode.W))
+        if (index == 2)
         {
             maxHeight = true;
         }
-             
+        #endregion
+
+        #region PC
+        //if (Input.GetKeyDown(KeyCode.W) && !jumping)
+        //{
+
+        //    animator.SetBool("跳躍", true);
+        //    jumping = true;
+        //    rd2D.AddForce(transform.up * maxJumpPower, ForceMode2D.Impulse);
+
+        //}
+        //else if (Input.GetKey(KeyCode.W) && jumping && !maxHeight)
+        //{
+
+        //    if (rd2D.velocity.y > maxHigh)
+        //    {
+        //        maxHeight = true;
+        //    }
+        //    rd2D.AddForce(transform.up * minJumpPower, ForceMode2D.Impulse);
+        //}
+        //if (Input.GetKeyUp(KeyCode.W))
+        //{
+        //    maxHeight = true;
+        //}
+        #endregion
     }
+    public void Attack(int index)
+    {
+        switch (index)
+        {
+            case 0:
+                animator.SetTrigger("站姿輕拳");
+                break;
+            case 1:
+                animator.SetTrigger("站姿重拳");
+                break;
+        }
+    }
+
 }
