@@ -24,6 +24,7 @@ public class PlayerAction : MonoBehaviour
     private Animator animator;
     private bool jumping,maxHeight;//跳躍狀態，抵達跳躍最大高度
     private float lookX;
+    private float FightWaitTime;//進入戰鬥狀態後的等待時間
     
     
 
@@ -40,6 +41,15 @@ public class PlayerAction : MonoBehaviour
         //Debug.Log(rd2D.velocity.x);
         Squat();
         //Debug.Log(jumping);
+        if (animator.GetBool("戰鬥待機"))
+        {
+            FightWaitTime += Time.deltaTime;
+            if (FightWaitTime >= 3)//在戰鬥狀態待機超過3秒，則恢復一般站立動作
+            {
+                Fighting(1);
+            }
+        }
+        //Debug.Log(FightWaitTime);
     }
     private void FixedUpdate()
     {
@@ -81,8 +91,10 @@ public class PlayerAction : MonoBehaviour
     }
     private void Move()
     {
+        
         if (Input.GetKey(KeyCode.D))
         {
+            Fighting(1);
             animator.SetBool("跑步", true);
             transform.Translate(transform.right * speed);
             //rd2D.AddForce(transform.right * speed);
@@ -90,6 +102,7 @@ public class PlayerAction : MonoBehaviour
         }
         if (Input.GetKey(KeyCode.A))
         {
+            Fighting(1);
             animator.SetBool("跑步", true);
             transform.Translate(transform.right * -speed);
             //rd2D.AddForce(transform.right * -speed);
@@ -101,6 +114,7 @@ public class PlayerAction : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.S))
         {
+            Fighting(1);
             animator.SetBool("蹲下", true);
         }
         if (Input.GetKeyUp(KeyCode.S))
@@ -113,6 +127,7 @@ public class PlayerAction : MonoBehaviour
         #region Mobile
         if (index==0 && !jumping)
         {
+            Fighting(1);
             animator.SetBool("跳躍", true);
             jumping = true;
             rd2D.AddForce(transform.up * maxJumpPower, ForceMode2D.Impulse);
@@ -157,15 +172,35 @@ public class PlayerAction : MonoBehaviour
     }
     public void Attack(int index)
     {
+        
         switch (index)
         {
             case 0:
-                animator.SetTrigger("站姿輕拳");
+                animator.SetTrigger("輕拳");
                 break;
             case 1:
-                animator.SetTrigger("站姿重拳");
+                animator.SetTrigger("重拳");
                 break;
         }
+        Fighting(0);
     }
-
+    private void Fighting(int index)
+    {
+        
+        if (index == 0)
+        {
+            animator.SetBool("戰鬥待機", true);
+            FightWaitTime = 0;
+        }
+        else
+        {
+            animator.SetBool("戰鬥待機", false);
+            FightWaitTime = 0;
+        }
+       
+    }
+    public void Dodge()
+    {
+        animator.SetTrigger("閃躲");
+    }
 }
