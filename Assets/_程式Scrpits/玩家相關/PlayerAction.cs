@@ -25,8 +25,8 @@ public class PlayerAction : MonoBehaviour
     private bool jumping,maxHeight;//跳躍狀態，抵達跳躍最大高度
     private float lookX;
     private float FightWaitTime;//進入戰鬥狀態後的等待時間
-    
-    
+
+    private float starthigh, jumphigh,nowhigh; //起跳位置 相差高度 現在高度
 
     void Start()
     {
@@ -73,9 +73,15 @@ public class PlayerAction : MonoBehaviour
             //Debug.Log(buttomPos.position.y > collision.transform.position.y + offset);
             if (buttomPos.position.y > collision.transform.position.y + offset) 
             {
+                animator.SetBool("落下", false); //
                 animator.SetBool("跳躍", false);
                 jumping = false;
                 maxHeight = false;
+
+                starthigh = rd2D.transform.position.y; //重設起跳位置
+                nowhigh = starthigh; //重設當前高度
+                jumphigh = 0; //重設高度
+
                 Time.timeScale = 1;
             }
             
@@ -127,22 +133,43 @@ public class PlayerAction : MonoBehaviour
         #region Mobile
         if (index==0 && !jumping)
         {
+            starthigh = rd2D.transform.position.y; //紀錄起跳位置
+            nowhigh = starthigh; //紀錄當前高度
+            jumphigh = 0; //紀錄跳躍高度
+
             Fighting(1);
             animator.SetBool("跳躍", true);
             jumping = true;
-            rd2D.AddForce(transform.up * maxJumpPower, ForceMode2D.Impulse);
+            rd2D.velocity = Vector2.up * maxJumpPower;
+            //rd2D.AddForce(transform.up * maxJumpPower, ForceMode2D.Impulse);
         }
         else if(index==1 && jumping && !maxHeight)
-        { 
-            if (rd2D.velocity.y > maxHigh)
+        {
+            //if (rd2D.velocity.y > maxHigh|| rd2D.velocity.y <0)
+            //{
+            //    maxHeight = true;
+            //}
+            nowhigh = rd2D.transform.position.y; //紀錄當前高度
+            jumphigh = nowhigh - starthigh; //紀錄跳躍高度
+            Debug.Log(jumphigh);
+            rd2D.gravityScale = 0;
+
+            if (jumphigh > maxHigh )
             {
                 maxHeight = true;
+                rd2D.gravityScale = 10;
+                animator.SetBool("落下", true);
             }
-            rd2D.AddForce(transform.up * minJumpPower, ForceMode2D.Impulse);
+
+            rd2D.velocity = Vector2.up * maxJumpPower;
+            //rd2D.velocity += Vector2.up * minJumpPower;
+            //rd2D.AddForce(transform.up * minJumpPower, ForceMode2D.Impulse);  
         }
         if (index == 2)
         {
             maxHeight = true;
+            rd2D.gravityScale = 10;
+            animator.SetBool("落下", true);
         }
         #endregion
 
