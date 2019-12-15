@@ -8,11 +8,11 @@ public class PlayerAction : MonoBehaviour
     [Header("移動速度:"), SerializeField]
     private float speed = 0.25f;
     [Header("最大跳躍力:"), SerializeField]
-    private float maxJumpPower = 10;
+    private float maxJumpPower = 15;
     [Header("最小跳躍力:"), SerializeField]
-    private float minJumpPower = 3;
+    private float minJumpPower = 2;
     [Header("跳躍最大高度:"), SerializeField]
-    private float maxHigh = 20;
+    private float maxHigh = 5.5f;
     [Header("腳底Transform:"), SerializeField]
     private Transform buttomPos;
     [Header("腳底Collider:"), SerializeField]
@@ -73,8 +73,9 @@ public class PlayerAction : MonoBehaviour
             //Debug.Log(buttomPos.position.y > collision.transform.position.y + offset);
             if (buttomPos.position.y > collision.transform.position.y + offset) 
             {
-                animator.SetBool("落下", false); //
+                
                 animator.SetBool("跳躍", false);
+                animator.SetBool("落下", false); //
                 jumping = false;
                 maxHeight = false;
 
@@ -140,7 +141,8 @@ public class PlayerAction : MonoBehaviour
             Fighting(1);
             animator.SetBool("跳躍", true);
             jumping = true;
-            rd2D.velocity = Vector2.up * maxJumpPower;
+            //rd2D.gravityScale = 0;
+            rd2D.velocity = transform.up * maxJumpPower;
             //rd2D.AddForce(transform.up * maxJumpPower, ForceMode2D.Impulse);
         }
         else if(index==1 && jumping && !maxHeight)
@@ -151,8 +153,8 @@ public class PlayerAction : MonoBehaviour
             //}
             nowhigh = rd2D.transform.position.y; //紀錄當前高度
             jumphigh = nowhigh - starthigh; //紀錄跳躍高度
-            Debug.Log(jumphigh);
-            rd2D.gravityScale = 0;
+           
+            //rd2D.gravityScale = 0;
 
             if (jumphigh > maxHigh )
             {
@@ -161,7 +163,7 @@ public class PlayerAction : MonoBehaviour
                 animator.SetBool("落下", true);
             }
 
-            rd2D.velocity = Vector2.up * maxJumpPower;
+            rd2D.velocity = transform.up * maxJumpPower;
             //rd2D.velocity += Vector2.up * minJumpPower;
             //rd2D.AddForce(transform.up * minJumpPower, ForceMode2D.Impulse);  
         }
@@ -171,6 +173,19 @@ public class PlayerAction : MonoBehaviour
             rd2D.gravityScale = 10;
             animator.SetBool("落下", true);
         }
+
+        //放到外面-----------------------------------------
+        nowhigh = rd2D.transform.position.y; //紀錄當前高度
+        jumphigh = nowhigh - starthigh; //紀錄跳躍高度
+        if ((jumphigh > maxHigh||rd2D.velocity.y < 0)&&jumping)
+        {
+            maxHeight = true;
+            rd2D.gravityScale = 10;
+            animator.SetBool("落下", true);
+        }
+
+       
+        //-------------------------------------------------
         #endregion
 
         #region PC
