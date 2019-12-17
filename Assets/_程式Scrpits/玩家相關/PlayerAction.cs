@@ -13,21 +13,25 @@ public class PlayerAction : MonoBehaviour
     private float minJumpPower = 2;
     [Header("跳躍最大高度:"), SerializeField]
     private float maxHigh = 5.5f;
+    [Header("閃躲移動距離:"), SerializeField]
+    private float DodgeDis;
     [Header("腳底Transform:"), SerializeField]
     private Transform buttomPos;
     [Header("腳底Collider:"), SerializeField]
     private BoxCollider2D sole;
-
-
+    
 
     private Rigidbody2D rd2D;
     private Animator animator;
     private bool jumping,maxHeight;//跳躍狀態，抵達跳躍最大高度
+    public bool controlLock,moveLock;//控制鎖，移動鎖
     private float lookX;
     private float FightWaitTime;//進入戰鬥狀態後的等待時間
 
     private float starthigh, jumphigh,nowhigh; //起跳位置 相差高度 現在高度
 
+
+    #region 內建方法
     void Start()
     {
         lookX = transform.localScale.x;//存取自身的scale
@@ -48,6 +52,10 @@ public class PlayerAction : MonoBehaviour
             {
                 Fighting(1);
             }
+        }
+        if (!Input.GetKey(KeyCode.S))
+        {
+            animator.SetBool("蹲下", false);
         }
         //Debug.Log(FightWaitTime);
     }
@@ -82,13 +90,16 @@ public class PlayerAction : MonoBehaviour
                 starthigh = rd2D.transform.position.y; //重設起跳位置
                 nowhigh = starthigh; //重設當前高度
                 jumphigh = 0; //重設高度
+                
 
                 Time.timeScale = 1;
             }
             
         }
     }
-   
+    #endregion
+    //控制鎖時間 輕攻擊0.05s，重攻擊0.3s，閃躲0.3s
+    #region 玩家動作
     private void Idle()
     {
         if (rd2D.velocity.x == 0)//停止移動就回到站立動畫
@@ -98,7 +109,7 @@ public class PlayerAction : MonoBehaviour
     }
     private void Move()
     {
-        
+        if (controlLock || moveLock) return;
         if (Input.GetKey(KeyCode.D))
         {
             Fighting(1);
@@ -119,18 +130,23 @@ public class PlayerAction : MonoBehaviour
     }
     private void Squat()
     {
+        if (controlLock) return;
         if (Input.GetKey(KeyCode.S))
         {
             Fighting(1);
+            moveLock = true;
             animator.SetBool("蹲下", true);
         }
         if (Input.GetKeyUp(KeyCode.S))
         {
+            MoveUnLock();
             animator.SetBool("蹲下", false);
         }
     }
     public void Jump(int index)
     {
+        //if (controlLock) return;閃躲(測試)
+        //controlLock = true;
         #region Mobile
         if (index==0 && !jumping)
         {
@@ -214,7 +230,8 @@ public class PlayerAction : MonoBehaviour
     }
     public void Attack(int index)
     {
-        
+        if (controlLock) return;
+        controlLock = true;
         switch (index)
         {
             case 0:
@@ -224,7 +241,9 @@ public class PlayerAction : MonoBehaviour
                 animator.SetTrigger("重拳");
                 break;
         }
-        Fighting(0);
+        
+        if(!animator.GetBool("蹲下")) Fighting(0);
+
     }
     private void Fighting(int index)
     {
@@ -243,6 +262,28 @@ public class PlayerAction : MonoBehaviour
     }
     public void Dodge()
     {
+        if (controlLock) return;
+        controlLock = true;
         animator.SetTrigger("閃躲");
+        if (transform.localScale.x > 0 || Input.GetKey(KeyCode.D)) 
+        {
+            rd2D.AddForceAtPosition(transform.right * DodgeDis, transform.position,ForceMode2D.Impulse);
+        }
+        else if(transform.localScale.x < 0 || Input.GetKey(KeyCode.A))
+        {
+            rd2D.AddForceAtPosition(-transform.right * DodgeDis, transform.position,ForceMode2D.Impulse);
+        }
     }
+    public void MoveUnLock()
+    {
+        
+        moveLock = false;
+    }
+    public  IEnumerator ContorlUnLock(float time)
+    {
+        yield return new WaitForSeconds(time);
+        controlLock = false;
+    }
+    #endregion
+  
 }
