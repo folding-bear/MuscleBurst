@@ -180,7 +180,7 @@ public class PlayerAction : MonoBehaviour
         if ((jumphigh > maxHigh||rd2D.velocity.y < 0)&&jumping)
         {
             maxHeight = true;
-            rd2D.gravityScale = 10;
+            
             animator.SetBool("落下", true);
         }
 
