@@ -8,26 +8,30 @@ public class PlayerAction : MonoBehaviour
     [Header("移動速度:"), SerializeField]
     private float speed = 0.25f;
     [Header("最大跳躍力:"), SerializeField]
-    private float maxJumpPower = 10;
+    private float maxJumpPower = 15;
     [Header("最小跳躍力:"), SerializeField]
-    private float minJumpPower = 3;
+    private float minJumpPower = 2;
     [Header("跳躍最大高度:"), SerializeField]
-    private float maxHigh = 20;
+    private float maxHigh = 5.5f;
+    [Header("閃躲移動距離:"), SerializeField]
+    private float DodgeDis;
     [Header("腳底Transform:"), SerializeField]
     private Transform buttomPos;
     [Header("腳底Collider:"), SerializeField]
     private BoxCollider2D sole;
-
-
+    
 
     private Rigidbody2D rd2D;
     private Animator animator;
     private bool jumping,maxHeight;//跳躍狀態，抵達跳躍最大高度
+    public bool controlLock,moveLock;//控制鎖，移動鎖
     private float lookX;
     private float FightWaitTime;//進入戰鬥狀態後的等待時間
 
     private float starthigh, jumphigh,nowhigh; //起跳位置 相差高度 現在高度
 
+
+    #region 內建方法
     void Start()
     {
         lookX = transform.localScale.x;//存取自身的scale
@@ -48,6 +52,10 @@ public class PlayerAction : MonoBehaviour
             {
                 Fighting(1);
             }
+        }
+        if (!Input.GetKey(KeyCode.S))
+        {
+            animator.SetBool("蹲下", false);
         }
         //Debug.Log(FightWaitTime);
     }
@@ -73,21 +81,25 @@ public class PlayerAction : MonoBehaviour
             //Debug.Log(buttomPos.position.y > collision.transform.position.y + offset);
             if (buttomPos.position.y > collision.transform.position.y + offset) 
             {
-                animator.SetBool("落下", false); //
+                
                 animator.SetBool("跳躍", false);
+                animator.SetBool("落下", false); //
                 jumping = false;
                 maxHeight = false;
 
                 starthigh = rd2D.transform.position.y; //重設起跳位置
                 nowhigh = starthigh; //重設當前高度
                 jumphigh = 0; //重設高度
+                
 
                 Time.timeScale = 1;
             }
             
         }
     }
-   
+    #endregion
+    //控制鎖時間 輕攻擊0.05s，重攻擊0.3s，閃躲0.3s
+    #region 玩家動作
     private void Idle()
     {
         if (rd2D.velocity.x == 0)//停止移動就回到站立動畫
@@ -97,7 +109,7 @@ public class PlayerAction : MonoBehaviour
     }
     private void Move()
     {
-        
+        if (controlLock || moveLock) return;
         if (Input.GetKey(KeyCode.D))
         {
             Fighting(1);
@@ -118,18 +130,23 @@ public class PlayerAction : MonoBehaviour
     }
     private void Squat()
     {
+        if (controlLock) return;
         if (Input.GetKey(KeyCode.S))
         {
             Fighting(1);
+            moveLock = true;
             animator.SetBool("蹲下", true);
         }
         if (Input.GetKeyUp(KeyCode.S))
         {
+            MoveUnLock();
             animator.SetBool("蹲下", false);
         }
     }
     public void Jump(int index)
     {
+        //if (controlLock) return;閃躲(測試)
+        //controlLock = true;
         #region Mobile
         if (index==0 && !jumping)
         {
@@ -140,7 +157,8 @@ public class PlayerAction : MonoBehaviour
             Fighting(1);
             animator.SetBool("跳躍", true);
             jumping = true;
-            rd2D.velocity = Vector2.up * maxJumpPower;
+            //rd2D.gravityScale = 0;
+            rd2D.velocity = transform.up * maxJumpPower;
             //rd2D.AddForce(transform.up * maxJumpPower, ForceMode2D.Impulse);
         }
         else if(index==1 && jumping && !maxHeight)
@@ -151,8 +169,8 @@ public class PlayerAction : MonoBehaviour
             //}
             nowhigh = rd2D.transform.position.y; //紀錄當前高度
             jumphigh = nowhigh - starthigh; //紀錄跳躍高度
-            Debug.Log(jumphigh);
-            rd2D.gravityScale = 0;
+           
+            //rd2D.gravityScale = 0;
 
             if (jumphigh > maxHigh )
             {
@@ -161,7 +179,7 @@ public class PlayerAction : MonoBehaviour
                 animator.SetBool("落下", true);
             }
 
-            rd2D.velocity = Vector2.up * maxJumpPower;
+            rd2D.velocity = transform.up * maxJumpPower;
             //rd2D.velocity += Vector2.up * minJumpPower;
             //rd2D.AddForce(transform.up * minJumpPower, ForceMode2D.Impulse);  
         }
@@ -171,6 +189,19 @@ public class PlayerAction : MonoBehaviour
             rd2D.gravityScale = 10;
             animator.SetBool("落下", true);
         }
+
+        //放到外面-----------------------------------------
+        nowhigh = rd2D.transform.position.y; //紀錄當前高度
+        jumphigh = nowhigh - starthigh; //紀錄跳躍高度
+        if ((jumphigh > maxHigh||rd2D.velocity.y < 0)&&jumping)
+        {
+            maxHeight = true;
+            
+            animator.SetBool("落下", true);
+        }
+
+       
+        //-------------------------------------------------
         #endregion
 
         #region PC
@@ -199,7 +230,8 @@ public class PlayerAction : MonoBehaviour
     }
     public void Attack(int index)
     {
-        
+        if (controlLock) return;
+        controlLock = true;
         switch (index)
         {
             case 0:
@@ -209,7 +241,9 @@ public class PlayerAction : MonoBehaviour
                 animator.SetTrigger("重拳");
                 break;
         }
-        Fighting(0);
+        
+        if(!animator.GetBool("蹲下")) Fighting(0);
+
     }
     private void Fighting(int index)
     {
@@ -228,6 +262,28 @@ public class PlayerAction : MonoBehaviour
     }
     public void Dodge()
     {
+        if (controlLock) return;
+        controlLock = true;
         animator.SetTrigger("閃躲");
+        if (transform.localScale.x > 0 || Input.GetKey(KeyCode.D)) 
+        {
+            rd2D.AddForceAtPosition(transform.right * DodgeDis, transform.position,ForceMode2D.Impulse);
+        }
+        else if(transform.localScale.x < 0 || Input.GetKey(KeyCode.A))
+        {
+            rd2D.AddForceAtPosition(-transform.right * DodgeDis, transform.position,ForceMode2D.Impulse);
+        }
     }
+    public void MoveUnLock()
+    {
+        
+        moveLock = false;
+    }
+    public  IEnumerator ContorlUnLock(float time)
+    {
+        yield return new WaitForSeconds(time);
+        controlLock = false;
+    }
+    #endregion
+  
 }
