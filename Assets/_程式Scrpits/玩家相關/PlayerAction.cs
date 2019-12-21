@@ -84,16 +84,17 @@ public class PlayerAction : MonoBehaviour
             {
                 
                 animator.SetBool("跳躍", false);
-                animator.SetBool("落下", false); //
+                animator.SetBool("落下", false); 
                 jumping = false;
                 maxHeight = false;
 
                 starthigh = rd2D.transform.position.y; //重設起跳位置
                 nowhigh = starthigh; //重設當前高度
                 jumphigh = 0; //重設高度
-                
 
-                Time.timeScale = 1;
+                controlLock = false;
+
+                Invoke("SoleUnShow", 0.2f);
             }
             
         }
@@ -150,18 +151,23 @@ public class PlayerAction : MonoBehaviour
     /// <param name="index"></param>
     public void Jump(int index)
     {
-        //if (controlLock) return;
-        //controlLock = true;
+        
         #region Mobile
         if (index==0 && !jumping)
         {
+
+            //if (controlLock) return;
+            //controlLock = true;
+            /// 2019/12/21 20-22 by wen
+            jumping = true;
             starthigh = rd2D.transform.position.y; //紀錄起跳位置
             nowhigh = starthigh; //紀錄當前高度
             jumphigh = 0; //紀錄跳躍高度
-
+            ///
             Fighting(1);
             animator.SetBool("跳躍", true);
-            jumping = true;
+            
+            Invoke("SoleShow",0.2f);
             //rd2D.gravityScale = 0;
             rd2D.velocity = transform.up * maxJumpPower;
             //rd2D.AddForce(transform.up * maxJumpPower, ForceMode2D.Impulse);
@@ -181,6 +187,7 @@ public class PlayerAction : MonoBehaviour
             if (jumphigh > maxHigh )
             {
                 maxHeight = true;
+                
                 rd2D.gravityScale = 10;
                 animator.SetBool("落下", true);
             }
@@ -192,6 +199,7 @@ public class PlayerAction : MonoBehaviour
         if (index == 2)
         {
             maxHeight = true;
+            
             rd2D.gravityScale = 10;
             animator.SetBool("落下", true);
         }
@@ -291,6 +299,15 @@ public class PlayerAction : MonoBehaviour
     {
         
         moveLock = false;
+    }
+    private void SoleShow()
+    {
+        sole.enabled = true;
+        
+    }
+    private void SoleUnShow()
+    {
+        sole.enabled = false;
     }
     public  IEnumerator ContorlUnLock(float time)
     {
