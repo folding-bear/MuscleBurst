@@ -13,8 +13,10 @@ public class PlayerAction : MonoBehaviour
     private float minJumpPower = 2;
     [Header("跳躍最大高度:"), SerializeField]
     private float maxHigh = 5.5f;
+    [Header("二段跳權限:"), SerializeField]
+    private bool doubleJump;
     [Header("閃躲移動距離:"), SerializeField]
-    private float DodgeDis;
+    private float dodgeDis;
     [Header("腳底Transform:"), SerializeField]
     private Transform buttomPos;
     [Header("腳底Collider:"), SerializeField]
@@ -62,9 +64,8 @@ public class PlayerAction : MonoBehaviour
     private void FixedUpdate()
     {
         
-        Idle();
-        
-        //Jump();
+        Idle();    
+        Jump();
 
     }
     private void OnCollisionEnter2D(Collision2D collision)
@@ -83,16 +84,17 @@ public class PlayerAction : MonoBehaviour
             {
                 
                 animator.SetBool("跳躍", false);
-                animator.SetBool("落下", false); //
+                animator.SetBool("落下", false); 
                 jumping = false;
                 maxHeight = false;
 
                 starthigh = rd2D.transform.position.y; //重設起跳位置
                 nowhigh = starthigh; //重設當前高度
                 jumphigh = 0; //重設高度
-                
 
-                Time.timeScale = 1;
+                controlLock = false;
+
+                Invoke("SoleUnShow", 0.2f);
             }
             
         }
@@ -143,23 +145,33 @@ public class PlayerAction : MonoBehaviour
             animator.SetBool("蹲下", false);
         }
     }
+    /// <summary>
+    /// 該方法須配合Event Trigger ; index=0 為 pointer down時使用，index=1 為 update selected時使用，index=2 為 pointer up時使用。
+    /// </summary>
+    /// <param name="index"></param>
     public void Jump(int index)
     {
-        //if (controlLock) return;閃躲(測試)
-        //controlLock = true;
+        
         #region Mobile
         if (index==0 && !jumping)
         {
+
+            //if (controlLock) return;
+            //controlLock = true;
+            /// 2019/12/21 20-22 by wen
+            jumping = true;
             starthigh = rd2D.transform.position.y; //紀錄起跳位置
             nowhigh = starthigh; //紀錄當前高度
             jumphigh = 0; //紀錄跳躍高度
-
+            ///
             Fighting(1);
             animator.SetBool("跳躍", true);
-            jumping = true;
+            
+            Invoke("SoleShow",0.2f);
             //rd2D.gravityScale = 0;
             rd2D.velocity = transform.up * maxJumpPower;
             //rd2D.AddForce(transform.up * maxJumpPower, ForceMode2D.Impulse);
+            
         }
         else if(index==1 && jumping && !maxHeight)
         {
@@ -175,6 +187,7 @@ public class PlayerAction : MonoBehaviour
             if (jumphigh > maxHigh )
             {
                 maxHeight = true;
+                
                 rd2D.gravityScale = 10;
                 animator.SetBool("落下", true);
             }
@@ -186,6 +199,7 @@ public class PlayerAction : MonoBehaviour
         if (index == 2)
         {
             maxHeight = true;
+            
             rd2D.gravityScale = 10;
             animator.SetBool("落下", true);
         }
@@ -204,6 +218,9 @@ public class PlayerAction : MonoBehaviour
         //-------------------------------------------------
         #endregion
 
+    }
+    private void Jump()
+    {
         #region PC
         //if (Input.GetKeyDown(KeyCode.W) && !jumping)
         //{
@@ -228,6 +245,10 @@ public class PlayerAction : MonoBehaviour
         //}
         #endregion
     }
+    /// <summary>
+    /// index=0 為輕攻擊，index=1 為重攻擊。
+    /// </summary>
+    /// <param name="index"></param>
     public void Attack(int index)
     {
         if (controlLock) return;
@@ -262,22 +283,31 @@ public class PlayerAction : MonoBehaviour
     }
     public void Dodge()
     {
-        if (controlLock) return;
+        if (controlLock || jumping) return;
         controlLock = true;
         animator.SetTrigger("閃躲");
         if (transform.localScale.x > 0 || Input.GetKey(KeyCode.D)) 
         {
-            rd2D.AddForceAtPosition(transform.right * DodgeDis, transform.position,ForceMode2D.Impulse);
+            rd2D.AddForceAtPosition(transform.right * dodgeDis, transform.position,ForceMode2D.Impulse);
         }
         else if(transform.localScale.x < 0 || Input.GetKey(KeyCode.A))
         {
-            rd2D.AddForceAtPosition(-transform.right * DodgeDis, transform.position,ForceMode2D.Impulse);
+            rd2D.AddForceAtPosition(-transform.right * dodgeDis, transform.position,ForceMode2D.Impulse);
         }
     }
     public void MoveUnLock()
     {
         
         moveLock = false;
+    }
+    private void SoleShow()
+    {
+        sole.enabled = true;
+        
+    }
+    private void SoleUnShow()
+    {
+        sole.enabled = false;
     }
     public  IEnumerator ContorlUnLock(float time)
     {
