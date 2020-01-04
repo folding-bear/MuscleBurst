@@ -26,7 +26,7 @@ public class PlayerAction : MonoBehaviour
     private Rigidbody2D rd2D;
     private Animator animator;
     private Collider2D platform;
-    public bool jumping,maxHeight,canJumpDown,squat;//跳躍狀態，抵達跳躍最大高度,在平台上可下躍
+    public bool jumping,maxHeight,canJumpDown,squat,attacking;//跳躍狀態，抵達跳躍最大高度，在平台上可下躍狀態，蹲下狀態，攻擊中狀態
     public bool controlLock,moveLock;//控制鎖，移動鎖
     private float lookX;
     private float FightWaitTime;//進入戰鬥狀態後的等待時間
@@ -175,7 +175,14 @@ public class PlayerAction : MonoBehaviour
 
         else if (Input.GetKeyUp(KeyCode.S) || !squat)
         {
-            StartCoroutine(MoveUnLock(0));
+            if (attacking)
+            {
+                moveLock = true;
+            }
+            else
+            {
+                StartCoroutine(MoveUnLock(0));
+            }
             animator.SetBool("蹲下", false);
           
         }
@@ -300,7 +307,8 @@ public class PlayerAction : MonoBehaviour
     {
         if (controlLock) return;
         controlLock = true;
-        moveLock = true;
+        attacking = true;
+        
         switch (index)
         {
             case 0:
@@ -356,6 +364,10 @@ public class PlayerAction : MonoBehaviour
     {
         sole.enabled = false;
     }
+    private void EndAttacking()
+    {
+        attacking = false;
+    }
     private void EndJumpDown()
     {
         platform.isTrigger = false;
@@ -372,7 +384,8 @@ public class PlayerAction : MonoBehaviour
             //print(hit.collider);
         }
         else
-        {
+        { 
+            //print(hit.collider);
             squat = false;      
         }
 
