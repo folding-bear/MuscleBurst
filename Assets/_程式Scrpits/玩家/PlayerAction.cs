@@ -25,11 +25,11 @@ public class PlayerAction : MonoBehaviour
 
     private Rigidbody2D rd2D;
     private Animator animator;
-    private bool jumping,maxHeight;//跳躍狀態，抵達跳躍最大高度
+    private Collider2D platform;
+    public bool jumping,maxHeight,canJumpDown,squat;//跳躍狀態，抵達跳躍最大高度,在平台上可下躍
     public bool controlLock,moveLock;//控制鎖，移動鎖
     private float lookX;
     private float FightWaitTime;//進入戰鬥狀態後的等待時間
-
     private float starthigh, jumphigh,nowhigh; //起跳位置 相差高度 現在高度
 
 
@@ -55,10 +55,10 @@ public class PlayerAction : MonoBehaviour
                 Fighting(1);
             }
         }
-        if (!Input.GetKey(KeyCode.S))
-        {
-            animator.SetBool("蹲下", false);
-        }
+        //if (!Input.GetKey(KeyCode.S))
+        //{
+        //    animator.SetBool("蹲下", false);
+        //}
         //Debug.Log(FightWaitTime);
     }
     private void FixedUpdate()
@@ -72,7 +72,7 @@ public class PlayerAction : MonoBehaviour
     {
         //Debug.Log("down");
         if (!sole.IsTouching(collision.collider)) { return; }
-        if (collision.gameObject.CompareTag("地面"))
+        if (collision.gameObject.CompareTag("地面") || collision.gameObject.CompareTag("可下躍平台"))
         {
             float offset = collision.collider.bounds.size.y / 2 - 0.2f;
             float collisionY = collision.transform.position.y;
@@ -99,6 +99,28 @@ public class PlayerAction : MonoBehaviour
             
         }
     }
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("可下躍平台") )
+        {
+           
+            platform = collision.collider;
+            
+            if (animator.GetBool("蹲下"))
+            {
+                canJumpDown = true;
+            }
+        }
+    }
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("可下躍平台")) 
+        {
+            platform = null;
+            canJumpDown = false;
+        } 
+    }
+
     #endregion
     //控制鎖時間 輕攻擊0.05s，重攻擊0.3s，閃躲0.3s
     #region 玩家動作
@@ -132,22 +154,30 @@ public class PlayerAction : MonoBehaviour
     }
     private void Squat()
     {
-        
-        
-        if (Input.GetKey(KeyCode.S))
+        if (jumping) return;
+        if (squat)
+        {
+            animator.SetBool("蹲下", true);
+            moveLock = true;
+            if (Input.GetKey(KeyCode.D)) transform.localScale = new Vector2(lookX, 0.25f);//角色面向右;
+            else if (Input.GetKey(KeyCode.A)) transform.localScale = new Vector2(-lookX, 0.25f);//角色面向左
+        }   
+        else if (Input.GetKey(KeyCode.S))
         {
             if (controlLock) return;
+            animator.SetBool("蹲下", true);
             Fighting(1);
             moveLock = true;
-            animator.SetBool("蹲下", true);
+            
             if (Input.GetKey(KeyCode.D)) transform.localScale = new Vector2(lookX, 0.25f);//角色面向右;
             else if (Input.GetKey(KeyCode.A)) transform.localScale = new Vector2(-lookX, 0.25f);//角色面向左
         }
 
-        if (Input.GetKeyUp(KeyCode.S))
+        else if (Input.GetKeyUp(KeyCode.S) || !squat)
         {
             StartCoroutine(MoveUnLock(0));
             animator.SetBool("蹲下", false);
+          
         }
     }
     /// <summary>
@@ -156,9 +186,18 @@ public class PlayerAction : MonoBehaviour
     /// <param name="index"></param>
     public void Jump(int index)
     {
-        
+        //Debug.Log(index);
         #region Mobile
-        if (index==0 && !jumping)
+        if(index ==0 && canJumpDown && platform != null)//平台下躍判定
+        {
+            platform.isTrigger = true;
+            //Debug.Log("1");
+            animator.SetBool("落下", true);
+            SoleShow();
+            Invoke("EndJumpDown", 0.5f);
+            
+        }    
+        else if (index==0 && !jumping)
         {
 
             if (controlLock || animator.GetBool("蹲下")) return;
@@ -175,8 +214,9 @@ public class PlayerAction : MonoBehaviour
             Invoke("SoleShow",0.2f);
             //rd2D.gravityScale = 0;
             rd2D.velocity = transform.up * maxJumpPower;
+            animator.SetBool("落下", true);
             //rd2D.AddForce(transform.up * maxJumpPower, ForceMode2D.Impulse);
-            
+
         }
         else if(index==1 && jumping && !maxHeight)
         {
@@ -194,18 +234,20 @@ public class PlayerAction : MonoBehaviour
                 maxHeight = true;
                 
                 rd2D.gravityScale = 10;
+                //Debug.Log("2");
                 animator.SetBool("落下", true);
             }
-
+            
             rd2D.velocity = transform.up * maxJumpPower;
             //rd2D.velocity += Vector2.up * minJumpPower;
             //rd2D.AddForce(transform.up * minJumpPower, ForceMode2D.Impulse);  
         }
-        if (index == 2)
+        if (index == 2 && jumping)
         {
             maxHeight = true;
             
             rd2D.gravityScale = 10;
+            //Debug.Log("3");
             animator.SetBool("落下", true);
         }
 
@@ -215,7 +257,7 @@ public class PlayerAction : MonoBehaviour
         if ((jumphigh > maxHigh||rd2D.velocity.y < 0)&&jumping)
         {
             maxHeight = true;
-            
+           //Debug.Log("4");
             animator.SetBool("落下", true);
         }
 
@@ -293,6 +335,8 @@ public class PlayerAction : MonoBehaviour
         controlLock = true;
         moveLock = true;
         animator.SetTrigger("閃躲");
+        
+        //Debug.DrawLine(buttomPos.position, new Vector2(0, 5), Color.red, 0.1f, true);
         if (transform.localScale.x > 0 || Input.GetKey(KeyCode.D)) 
         {
             rd2D.AddForceAtPosition(transform.right * dodgeDis, transform.position,ForceMode2D.Impulse);
@@ -311,6 +355,27 @@ public class PlayerAction : MonoBehaviour
     private void SoleUnShow()
     {
         sole.enabled = false;
+    }
+    private void EndJumpDown()
+    {
+        platform.isTrigger = false;
+        canJumpDown = false;
+        //animator.SetBool("落下", false);
+
+    }
+    public void Ray()
+    {
+        RaycastHit2D hit= Physics2D.Raycast(buttomPos.position, transform.up, 5, 256);
+        if (hit)
+        {
+            squat = true;
+            //print(hit.collider);
+        }
+        else
+        {
+            squat = false;      
+        }
+
     }
     public IEnumerator MoveUnLock(float time)
     {
