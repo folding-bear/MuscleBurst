@@ -636,7 +636,7 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_Enabled
     path: "\u9AA8\u67B6\u53CAIK/body_bone_1/body_bone_2/head_bone"
-    classID: 61
+    classID: 70
     script: {fileID: 0}
   m_PPtrCurves: []
   m_SampleRate: 60
@@ -790,7 +790,7 @@ AnimationClip:
       path: 2254080860
       attribute: 3305885265
       script: {fileID: 0}
-      typeID: 61
+      typeID: 70
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
@@ -2820,7 +2820,7 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_Enabled
     path: "\u9AA8\u67B6\u53CAIK/body_bone_1/body_bone_2/head_bone"
-    classID: 61
+    classID: 70
     script: {fileID: 0}
   m_EulerEditorCurves:
   - curve:

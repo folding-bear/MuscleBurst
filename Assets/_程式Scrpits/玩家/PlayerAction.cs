@@ -111,7 +111,7 @@ public class PlayerAction : MonoBehaviour
     }
     private void Move()
     {
-        if (controlLock || moveLock) return;
+        if (moveLock) return;
         if (Input.GetKey(KeyCode.D))
         {
             Fighting(1);
@@ -132,16 +132,21 @@ public class PlayerAction : MonoBehaviour
     }
     private void Squat()
     {
-        if (controlLock) return;
+        
+        
         if (Input.GetKey(KeyCode.S))
         {
+            if (controlLock) return;
             Fighting(1);
             moveLock = true;
             animator.SetBool("蹲下", true);
+            if (Input.GetKey(KeyCode.D)) transform.localScale = new Vector2(lookX, 0.25f);//角色面向右;
+            else if (Input.GetKey(KeyCode.A)) transform.localScale = new Vector2(-lookX, 0.25f);//角色面向左
         }
+
         if (Input.GetKeyUp(KeyCode.S))
         {
-            MoveUnLock();
+            StartCoroutine(MoveUnLock(0));
             animator.SetBool("蹲下", false);
         }
     }
@@ -156,8 +161,8 @@ public class PlayerAction : MonoBehaviour
         if (index==0 && !jumping)
         {
 
-            //if (controlLock) return;
-            //controlLock = true;
+            if (controlLock || animator.GetBool("蹲下")) return;
+            controlLock = true;
             /// 2019/12/21 20-22 by wen
             jumping = true;
             starthigh = rd2D.transform.position.y; //紀錄起跳位置
@@ -253,6 +258,7 @@ public class PlayerAction : MonoBehaviour
     {
         if (controlLock) return;
         controlLock = true;
+        moveLock = true;
         switch (index)
         {
             case 0:
@@ -285,6 +291,7 @@ public class PlayerAction : MonoBehaviour
     {
         if (controlLock || jumping) return;
         controlLock = true;
+        moveLock = true;
         animator.SetTrigger("閃躲");
         if (transform.localScale.x > 0 || Input.GetKey(KeyCode.D)) 
         {
@@ -295,11 +302,7 @@ public class PlayerAction : MonoBehaviour
             rd2D.AddForceAtPosition(-transform.right * dodgeDis, transform.position,ForceMode2D.Impulse);
         }
     }
-    public void MoveUnLock()
-    {
-        
-        moveLock = false;
-    }
+    
     private void SoleShow()
     {
         sole.enabled = true;
@@ -308,6 +311,11 @@ public class PlayerAction : MonoBehaviour
     private void SoleUnShow()
     {
         sole.enabled = false;
+    }
+    public IEnumerator MoveUnLock(float time)
+    {
+        yield return new WaitForSeconds(time);
+        moveLock = false;
     }
     public  IEnumerator ContorlUnLock(float time)
     {
