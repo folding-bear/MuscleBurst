@@ -5,6 +5,10 @@ TagManager:
   serializedVersion: 2
   tags:
   - "\u5730\u9762"
+  - "\u53EF\u4E0B\u8E8D\u5E73\u53F0"
+  - "\u653B\u64CA\u7BC4\u570D"
+  - "Monster\u653B\u64CA\u7BC4\u570D"
+  - Monster
   layers:
   - Default
   - TransparentFX
@@ -14,7 +18,7 @@ TagManager:
   - UI
   - 
   - 
-  - 
+  - "\u969C\u7919\u7269"
   - 
   - 
   - 
