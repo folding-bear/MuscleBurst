@@ -31,7 +31,7 @@ AnimatorController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: "\u5B8C\u6574LOGO"
+  m_Name: LOGO
   serializedVersion: 5
   m_AnimatorParameters: []
   m_AnimatorLayers:
@@ -62,8 +62,8 @@ AnimatorStateTransition:
   m_IsExit: 0
   serializedVersion: 3
   m_TransitionDuration: 0.12313187
-  m_TransitionOffset: 0
-  m_ExitTime: 1.0398093
+  m_TransitionOffset: 0.016127525
+  m_ExitTime: 1.0091443
   m_HasExitTime: 1
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
