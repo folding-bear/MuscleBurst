@@ -12,20 +12,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77925e95037ec7c4aa0c22aaff203629, type: 3}
   m_Name: "\u91CE\u72FC"
   m_EditorClassIdentifier: 
+  rank: 0
+  id: N01A1001
   level: 2
-  hp: 0
-  superArmour: 0
-  damage: 0
-  contactDamage: 0
-  defense: 0
-  attackSpeed: 0
-  moveSpeeed: 0
-  exp: 0
+  maxHp: 50
+  superArmour: 1
+  attack: 10
+  defense: 10
+  attackRate: 1
+  moveSpeed: 1.5
+  touchDamage: 10
   elementResistances:
   - 0
   - 0
   - 0
+  - 0.05
   - 0
   - 0
-  - 0
-  rank: 0
+  exp: 10
+  dropItemID: 
