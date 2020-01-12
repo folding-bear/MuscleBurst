@@ -23,5 +23,10 @@ public class EnemyDate : ScriptableObject
     public float moveSpeeed;
     [Header("經驗值:")]
     public float exp;
-  
+    [Header("抗性:"),Range(-2,1),Tooltip("抗性依序分別為火、水、風、地、光、暗。")]
+    public float[] elementResistances = new float[6];
+
+    public enum Rank{N,R,S};
+    [Header("強度分級:")]
+    public Rank rank;
 }
