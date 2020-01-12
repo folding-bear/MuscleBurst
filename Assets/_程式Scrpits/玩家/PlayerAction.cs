@@ -26,7 +26,8 @@ public class PlayerAction : MonoBehaviour
     private Rigidbody2D rd2D;
     private Animator animator;
     private Collider2D platform;
-    public bool jumping,maxHeight,canJumpDown,squat,attacking;//跳躍狀態，抵達跳躍最大高度，在平台上可下躍狀態，蹲下狀態，攻擊中狀態
+    public int state;//0為無移動鎖定狀態，1為攻擊狀態，2為閃躲狀態
+    public bool jumping,maxHeight,canJumpDown,squat;//跳躍狀態，抵達跳躍最大高度，在平台上可下躍狀態，蹲下狀態
     public bool controlLock,moveLock;//控制鎖，移動鎖
     private float lookX;
     private float FightWaitTime;//進入戰鬥狀態後的等待時間
@@ -65,7 +66,7 @@ public class PlayerAction : MonoBehaviour
     {
         
         Idle();    
-        Jump();
+        //Jump();
 
     }
     private void OnCollisionEnter2D(Collision2D collision)
@@ -80,7 +81,7 @@ public class PlayerAction : MonoBehaviour
             //Debug.Log("腳底的Y"+buttomPos.position.y);
             //Debug.Log("碰撞到的Y" +( collisionY + offset));
             //Debug.Log(buttomPos.position.y > collision.transform.position.y + offset);
-            if (buttomPos.position.y > collision.transform.position.y + offset) 
+            if (buttomPos.position.y > collision.transform.position.y + offset /*&& animator.GetBool("跳躍")*/) 
             {
                 
                 animator.SetBool("跳躍", false);
@@ -133,7 +134,7 @@ public class PlayerAction : MonoBehaviour
     }
     private void Move()
     {
-        if (moveLock) return;
+        if (moveLock || squat) return;
         if (Input.GetKey(KeyCode.D))
         {
             Fighting(1);
@@ -175,7 +176,7 @@ public class PlayerAction : MonoBehaviour
 
         else if (Input.GetKeyUp(KeyCode.S) || !squat)
         {
-            if (attacking)
+            if (state > 0) 
             {
                 moveLock = true;
             }
@@ -221,7 +222,7 @@ public class PlayerAction : MonoBehaviour
             Invoke("SoleShow",0.2f);
             //rd2D.gravityScale = 0;
             rd2D.velocity = transform.up * maxJumpPower;
-            animator.SetBool("落下", true);
+            //animator.SetBool("落下", true);
             //rd2D.AddForce(transform.up * maxJumpPower, ForceMode2D.Impulse);
 
         }
@@ -236,14 +237,14 @@ public class PlayerAction : MonoBehaviour
            
             //rd2D.gravityScale = 0;
 
-            if (jumphigh > maxHigh )
-            {
-                maxHeight = true;
+            //if (jumphigh >= maxHigh )
+            //{
+            //    maxHeight = true;
                 
-                rd2D.gravityScale = 10;
-                //Debug.Log("2");
-                animator.SetBool("落下", true);
-            }
+            //    rd2D.gravityScale = 10;
+            //    //Debug.Log("2");
+            //    animator.SetBool("落下", true);
+            //}
             
             rd2D.velocity = transform.up * maxJumpPower;
             //rd2D.velocity += Vector2.up * minJumpPower;
@@ -255,17 +256,17 @@ public class PlayerAction : MonoBehaviour
             
             rd2D.gravityScale = 10;
             //Debug.Log("3");
-            animator.SetBool("落下", true);
+            //animator.SetBool("跳躍", false);
         }
 
         //放到外面-----------------------------------------
         nowhigh = rd2D.transform.position.y; //紀錄當前高度
         jumphigh = nowhigh - starthigh; //紀錄跳躍高度
-        if ((jumphigh > maxHigh||rd2D.velocity.y < 0)&&jumping)
+        if ((jumphigh > maxHigh || rd2D.velocity.y < 0) && jumping)
         {
             maxHeight = true;
-           //Debug.Log("4");
-            animator.SetBool("落下", true);
+            //Debug.Log("4");
+            //animator.SetBool("跳躍", false);
         }
 
        
@@ -307,8 +308,8 @@ public class PlayerAction : MonoBehaviour
     {
         if (controlLock) return;
         controlLock = true;
-        attacking = true;
-        
+        state = 1;
+
         switch (index)
         {
             case 0:
@@ -341,7 +342,7 @@ public class PlayerAction : MonoBehaviour
     {
         if (controlLock || jumping) return;
         controlLock = true;
-        moveLock = true;
+        state = 2;
         animator.SetTrigger("閃躲");
         
         //Debug.DrawLine(buttomPos.position, new Vector2(0, 5), Color.red, 0.1f, true);
@@ -366,7 +367,7 @@ public class PlayerAction : MonoBehaviour
     }
     private void EndAttacking()
     {
-        attacking = false;
+        state = 0;
     }
     private void EndJumpDown()
     {
@@ -381,12 +382,14 @@ public class PlayerAction : MonoBehaviour
         if (hit)
         {
             squat = true;
+            
             //print(hit.collider);
         }
         else
         { 
             //print(hit.collider);
-            squat = false;      
+            squat = false;
+            state = 0;
         }
 
     }
