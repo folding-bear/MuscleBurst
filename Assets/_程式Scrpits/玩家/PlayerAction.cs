@@ -66,7 +66,7 @@ public class PlayerAction : MonoBehaviour
     {
         
         Idle();    
-        //Jump();
+        Jump();
 
     }
     private void OnCollisionEnter2D(Collision2D collision)
@@ -196,6 +196,7 @@ public class PlayerAction : MonoBehaviour
     {
         //Debug.Log(index);
         #region Mobile
+        
         if(index ==0 && canJumpDown && platform != null)//平台下躍判定
         {
             platform.isTrigger = true;
