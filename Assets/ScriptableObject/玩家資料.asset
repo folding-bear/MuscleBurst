@@ -24,6 +24,6 @@ MonoBehaviour:
   pangRestore: 1
   maxExcited: 100
   curExcited: 0
-  superArmour: 0
+  superArmour: 1
   attackRate: 0
   moveSpeed: 0
