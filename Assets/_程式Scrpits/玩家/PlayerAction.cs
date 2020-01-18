@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerAction : MonoBehaviour
 {
-
+    #region 面板可見的區域變數
     [Header("移動速度:"), SerializeField]
     private float speed = 0.25f;
     [Header("最大跳躍力:"), SerializeField]
@@ -17,22 +17,24 @@ public class PlayerAction : MonoBehaviour
     private bool doubleJump;
     [Header("閃躲移動距離:"), SerializeField]
     private float dodgeDis;
-    [Header("腳底Transform:"), SerializeField]
+    #endregion
+
+    #region 面板隱藏的區域變數
+    //[Header("腳底Transform:"), SerializeField]
     private Transform buttomPos;
-    [Header("腳底Collider:"), SerializeField]
+    //[Header("腳底Collider:"), SerializeField]
     private BoxCollider2D sole;
     
-
     private Rigidbody2D rd2D;
     private Animator animator;
     private Collider2D platform;
-    public int state;//0為無移動鎖定狀態，1為攻擊狀態，2為閃躲狀態
-    public bool jumping,maxHeight,canJumpDown,squat;//跳躍狀態，抵達跳躍最大高度，在平台上可下躍狀態，蹲下狀態
-    public bool controlLock,moveLock;//控制鎖，移動鎖
+    private int state;//0為無移動鎖定狀態，1為攻擊狀態，2為閃躲狀態
+    private bool jumping,maxHeight,canJumpDown,squat;//跳躍狀態，抵達跳躍最大高度，在平台上可下躍狀態，蹲下狀態
+    private bool controlLock,moveLock;//控制鎖，移動鎖
     private float lookX;
     private float FightWaitTime;//進入戰鬥狀態後的等待時間
     private float starthigh, jumphigh,nowhigh; //起跳位置 相差高度 現在高度
-
+    #endregion
 
     #region 內建方法
     void Start()
@@ -40,6 +42,8 @@ public class PlayerAction : MonoBehaviour
         lookX = transform.localScale.x;//存取自身的scale
         animator = GetComponent<Animator>();//存取Animator
         rd2D = GetComponent<Rigidbody2D>();//存取Rigidbody2D
+        buttomPos = transform.GetChild(5).GetComponent<BoxCollider2D>().transform;
+        sole = transform.GetChild(5).GetComponent<BoxCollider2D>();
     }
     
     void Update()
@@ -56,11 +60,6 @@ public class PlayerAction : MonoBehaviour
                 Fighting(1);
             }
         }
-        //if (!Input.GetKey(KeyCode.S))
-        //{
-        //    animator.SetBool("蹲下", false);
-        //}
-        //Debug.Log(FightWaitTime);
     }
     private void FixedUpdate()
     {
@@ -324,6 +323,10 @@ public class PlayerAction : MonoBehaviour
         if(!animator.GetBool("蹲下")) Fighting(0);
 
     }
+    /// <summary>
+    /// index=0，代表進入戰鬥待機狀態；index=1，離開戰鬥待機狀態。
+    /// </summary>
+    /// <param name="index"></param>
     private void Fighting(int index)
     {
         
@@ -345,8 +348,7 @@ public class PlayerAction : MonoBehaviour
         controlLock = true;
         state = 2;
         animator.SetTrigger("閃躲");
-        
-        //Debug.DrawLine(buttomPos.position, new Vector2(0, 5), Color.red, 0.1f, true);
+  
         if (transform.localScale.x > 0 || Input.GetKey(KeyCode.D)) 
         {
             rd2D.AddForceAtPosition(transform.right * dodgeDis, transform.position,ForceMode2D.Impulse);
