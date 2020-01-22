@@ -4254,47 +4254,9 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    attribute: m_Enabled
-    path: "\u8EC0\u5E79/\u9AA8\u67B6/body_bone_1"
-    classID: 70
-    script: {fileID: 0}
-  - curve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 0
-        inSlope: Infinity
-        outSlope: Infinity
-        tangentMode: 103
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_Enabled
-    path: "\u8EC0\u5E79/\u9AA8\u67B6"
-    classID: 70
-    script: {fileID: 0}
-  - curve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 0
-        inSlope: Infinity
-        outSlope: Infinity
-        tangentMode: 103
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_Enabled
-    path: "\u8EC0\u5E79/\u9AA8\u67B6/body_bone_1/body_bone_2/\u982D/bone_1"
-    classID: 58
+    attribute: m_IsActive
+    path: "\u8EAB\u9AD4\u7BC4\u570D"
+    classID: 1
     script: {fileID: 0}
   m_PPtrCurves:
   - curve:
@@ -4935,24 +4897,10 @@ AnimationClip:
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 2586092426
-      attribute: 3305885265
+      path: 3644641484
+      attribute: 2086281974
       script: {fileID: 0}
-      typeID: 70
-      customType: 0
-      isPPtrCurve: 0
-    - serializedVersion: 2
-      path: 2946463601
-      attribute: 3305885265
-      script: {fileID: 0}
-      typeID: 70
-      customType: 0
-      isPPtrCurve: 0
-    - serializedVersion: 2
-      path: 1426738271
-      attribute: 3305885265
-      script: {fileID: 0}
-      typeID: 58
+      typeID: 1
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
@@ -17827,47 +17775,9 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    attribute: m_Enabled
-    path: "\u8EC0\u5E79/\u9AA8\u67B6/body_bone_1"
-    classID: 70
-    script: {fileID: 0}
-  - curve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 0
-        inSlope: Infinity
-        outSlope: Infinity
-        tangentMode: 103
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_Enabled
-    path: "\u8EC0\u5E79/\u9AA8\u67B6"
-    classID: 70
-    script: {fileID: 0}
-  - curve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 0
-        inSlope: Infinity
-        outSlope: Infinity
-        tangentMode: 103
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_Enabled
-    path: "\u8EC0\u5E79/\u9AA8\u67B6/body_bone_1/body_bone_2/\u982D/bone_1"
-    classID: 58
+    attribute: m_IsActive
+    path: "\u8EAB\u9AD4\u7BC4\u570D"
+    classID: 1
     script: {fileID: 0}
   m_EulerEditorCurves:
   - curve:
