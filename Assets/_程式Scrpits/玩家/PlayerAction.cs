@@ -209,7 +209,7 @@ public class PlayerAction : MonoBehaviour
         {
 
             if (controlLock || animator.GetBool("蹲下")) return;
-            controlLock = true;
+            //controlLock = true;
             /// 2019/12/21 20-22 by wen
             jumping = true;
             starthigh = rd2D.transform.position.y; //紀錄起跳位置
