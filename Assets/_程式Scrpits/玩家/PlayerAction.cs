@@ -29,8 +29,8 @@ public class PlayerAction : MonoBehaviour
     private Animator animator;
     private Collider2D platform;
     private int state;//0為無移動鎖定狀態，1為攻擊狀態，2為閃躲狀態
-    private bool jumping,maxHeight,canJumpDown,squat;//跳躍狀態，抵達跳躍最大高度，在平台上可下躍狀態，蹲下狀態
-    private bool controlLock,moveLock;//控制鎖，移動鎖
+    public bool jumping,maxHeight,canJumpDown,squat;//跳躍狀態，抵達跳躍最大高度，在平台上可下躍狀態，蹲下狀態
+    public bool controlLock,moveLock;//控制鎖，移動鎖
     private float lookX;
     private float FightWaitTime;//進入戰鬥狀態後的等待時間
     private float starthigh, jumphigh,nowhigh; //起跳位置 相差高度 現在高度
@@ -51,6 +51,7 @@ public class PlayerAction : MonoBehaviour
         Move();
         //Debug.Log(rd2D.velocity.x);
         Squat();
+        Attack();
         //Debug.Log(jumping);
         if (animator.GetBool("戰鬥待機"))
         {
@@ -66,6 +67,7 @@ public class PlayerAction : MonoBehaviour
         
         Idle();    
         Jump();
+        
 
     }
     private void OnCollisionEnter2D(Collision2D collision)
@@ -74,7 +76,7 @@ public class PlayerAction : MonoBehaviour
         if (!sole.IsTouching(collision.collider)) { return; }
         if (collision.gameObject.CompareTag("地面") || collision.gameObject.CompareTag("可下躍平台"))
         {
-            float offset = collision.collider.bounds.size.y / 2 - 0.2f;
+            float offset = collision.collider.bounds.size.y / 2 - 0.3f;
             float collisionY = collision.transform.position.y;
             //Debug.Log(offset);
             //Debug.Log("腳底的Y"+buttomPos.position.y);
@@ -94,7 +96,7 @@ public class PlayerAction : MonoBehaviour
 
                 controlLock = false;
 
-                Invoke("SoleUnShow", 0.2f);
+                Invoke("SoleUnShow",0);
             }
             
         }
@@ -209,7 +211,7 @@ public class PlayerAction : MonoBehaviour
         {
 
             if (controlLock || animator.GetBool("蹲下")) return;
-            //controlLock = true;
+            controlLock = true;
             /// 2019/12/21 20-22 by wen
             jumping = true;
             starthigh = rd2D.transform.position.y; //紀錄起跳位置
@@ -217,11 +219,13 @@ public class PlayerAction : MonoBehaviour
             jumphigh = 0; //紀錄跳躍高度
             ///
             Fighting(1);
+            if (state != 0) return;
             animator.SetBool("跳躍", true);
             
             Invoke("SoleShow",0.2f);
             //rd2D.gravityScale = 0;
-            rd2D.velocity = transform.up * maxJumpPower;
+            //if(!animator.GetBool("跳躍")) 
+                rd2D.velocity = transform.up * maxJumpPower;
             //animator.SetBool("落下", true);
             //rd2D.AddForce(transform.up * maxJumpPower, ForceMode2D.Impulse);
 
@@ -321,6 +325,31 @@ public class PlayerAction : MonoBehaviour
         }
         
         if(!animator.GetBool("蹲下")) Fighting(0);
+
+    }
+    public void Attack()
+    {
+        //if (controlLock) return;
+      
+       
+
+        if (Input.GetKeyDown(KeyCode.J))
+        {
+            state = 1;
+            controlLock = true;
+            animator.SetTrigger("輕拳"); 
+            if (!animator.GetBool("蹲下")) Fighting(0);
+        }
+        else if (Input.GetKeyDown(KeyCode.K))
+        {
+            state = 1;
+            controlLock = true;
+            animator.SetTrigger("重拳");
+            
+            if (!animator.GetBool("蹲下")) Fighting(0);
+        }       
+
+        
 
     }
     /// <summary>
