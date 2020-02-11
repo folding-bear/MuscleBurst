@@ -6277,14 +6277,14 @@ AnimationClip:
   m_HasMotionFloatCurves: 0
   m_Events:
   - time: 0.33333334
-    functionName: ContorlUnLock
+    functionName: MoveUnLock
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0.05
     intParameter: 0
     messageOptions: 0
   - time: 0.33333334
-    functionName: MoveUnLock
+    functionName: ContorlUnLock
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0.05

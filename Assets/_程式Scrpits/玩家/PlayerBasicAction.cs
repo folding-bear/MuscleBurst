@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerAction : MonoBehaviour
+public class PlayerBasicAction : MonoBehaviour
 {
     #region 面板可見的區域變數
     [Header("移動速度:"), SerializeField]
@@ -28,9 +28,9 @@ public class PlayerAction : MonoBehaviour
     private Rigidbody2D rd2D;
     private Animator animator;
     private Collider2D platform;
-    private int state;//0為無移動鎖定狀態，1為攻擊狀態，2為閃躲狀態
+    public int state;//0為無移動鎖定狀態，1為攻擊狀態，2為閃躲狀態
     public bool jumping,maxHeight,canJumpDown,squat;//跳躍狀態，抵達跳躍最大高度，在平台上可下躍狀態，蹲下狀態
-    public bool controlLock,moveLock;//控制鎖，移動鎖
+    public bool controlLock,actionLock,moveLock;//控制鎖，動作鎖，移動鎖
     private float lookX;
     private float FightWaitTime;//進入戰鬥狀態後的等待時間
     private float starthigh, jumphigh,nowhigh; //起跳位置 相差高度 現在高度
@@ -94,9 +94,9 @@ public class PlayerAction : MonoBehaviour
                 nowhigh = starthigh; //重設當前高度
                 jumphigh = 0; //重設高度
 
-                controlLock = false;
-
-                Invoke("SoleUnShow",0);
+                actionLock = false;
+                
+                Invoke("SoleUnShow",0.1f);
             }
             
         }
@@ -124,6 +124,7 @@ public class PlayerAction : MonoBehaviour
     }
 
     #endregion
+    #region 自訂方法
     //控制鎖時間 輕攻擊0.05s，重攻擊0.3s，閃躲0.3s
     #region 玩家動作
     private void Idle()
@@ -156,7 +157,7 @@ public class PlayerAction : MonoBehaviour
     }
     private void Squat()
     {
-        if (jumping) return;
+        if (jumping ) return;
         if (squat)
         {
             animator.SetBool("蹲下", true);
@@ -166,7 +167,7 @@ public class PlayerAction : MonoBehaviour
         }   
         else if (Input.GetKey(KeyCode.S))
         {
-            if (controlLock) return;
+            if (controlLock || actionLock) return;
             animator.SetBool("蹲下", true);
             Fighting(1);
             moveLock = true;
@@ -209,9 +210,9 @@ public class PlayerAction : MonoBehaviour
         }    
         else if (index==0 && !jumping)
         {
-
+            //Debug.Log("do jump");
             if (controlLock || animator.GetBool("蹲下")) return;
-            controlLock = true;
+            actionLock = true;
             /// 2019/12/21 20-22 by wen
             jumping = true;
             starthigh = rd2D.transform.position.y; //紀錄起跳位置
@@ -220,11 +221,13 @@ public class PlayerAction : MonoBehaviour
             ///
             Fighting(1);
             if (state != 0) return;
+            //Debug.Log("play anim");
             animator.SetBool("跳躍", true);
             
             Invoke("SoleShow",0.2f);
             //rd2D.gravityScale = 0;
             //if(!animator.GetBool("跳躍")) 
+            //Debug.Log("do up");
                 rd2D.velocity = transform.up * maxJumpPower;
             //animator.SetBool("落下", true);
             //rd2D.AddForce(transform.up * maxJumpPower, ForceMode2D.Impulse);
@@ -329,7 +332,7 @@ public class PlayerAction : MonoBehaviour
     }
     public void Attack()
     {
-        //if (controlLock) return;
+        if (controlLock) return;
       
        
 
@@ -373,7 +376,7 @@ public class PlayerAction : MonoBehaviour
     }
     public void Dodge()
     {
-        if (controlLock || jumping) return;
+        if (controlLock || actionLock|| jumping) return;
         controlLock = true;
         state = 2;
         animator.SetTrigger("閃躲");
@@ -387,7 +390,8 @@ public class PlayerAction : MonoBehaviour
             rd2D.AddForceAtPosition(-transform.right * dodgeDis, transform.position,ForceMode2D.Impulse);
         }
     }
-    
+    #endregion
+    #region 控制開關
     private void SoleShow()
     {
         sole.enabled = true;
@@ -425,16 +429,55 @@ public class PlayerAction : MonoBehaviour
         }
 
     }
+    /// <summary>
+    /// locknumber 0-2分別代表:controlLock、actionLock、moveLock；3-5分別代表:0和1、0和2、1和2；6則代表0-2全部。
+    /// lockswitch true/false 為locknumber的值；time為延遲時間。
+    /// </summary>
+    /// <returns></returns>
+    public IEnumerator LockSwitch(int locknumber,bool lockswitch,float time)
+    {
+        yield return new WaitForSeconds(time);
+        switch (locknumber)
+        {
+            case 0:
+                controlLock = lockswitch;
+                break;
+            case 1:
+                actionLock = lockswitch;
+                break;
+            case 2:
+                moveLock = lockswitch;
+                break;
+            case 3:
+                controlLock = lockswitch;
+                actionLock = lockswitch;
+                break;
+            case 4:
+                controlLock = lockswitch;
+                moveLock = lockswitch;
+                break;
+            case 5:
+                actionLock = lockswitch;
+                moveLock = lockswitch;
+                break;
+            case 6:
+                controlLock = lockswitch;
+                actionLock = lockswitch;
+                moveLock = lockswitch;
+                break;
+        }
+    }
     public IEnumerator MoveUnLock(float time)
     {
         yield return new WaitForSeconds(time);
         moveLock = false;
     }
-    public  IEnumerator ContorlUnLock(float time)
+    public IEnumerator ContorlUnLock(float time)
     {
         yield return new WaitForSeconds(time);
         controlLock = false;
     }
     #endregion
-  
+    #endregion
+
 }
