@@ -210,7 +210,7 @@ public class PlayerBasicAction : MonoBehaviour
         }    
         else if (index==0 && !jumping)
         {
-            //Debug.Log("do jump");
+           
             if (controlLock || animator.GetBool("蹲下")) return;
             actionLock = true;
             /// 2019/12/21 20-22 by wen
@@ -221,13 +221,13 @@ public class PlayerBasicAction : MonoBehaviour
             ///
             Fighting(1);
             if (state != 0) return;
-            //Debug.Log("play anim");
+           
             animator.SetBool("跳躍", true);
             
             Invoke("SoleShow",0.2f);
             //rd2D.gravityScale = 0;
             //if(!animator.GetBool("跳躍")) 
-            //Debug.Log("do up");
+            
                 rd2D.velocity = transform.up * maxJumpPower;
             //animator.SetBool("落下", true);
             //rd2D.AddForce(transform.up * maxJumpPower, ForceMode2D.Impulse);
