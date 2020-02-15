@@ -25,9 +25,11 @@ MonoBehaviour:
   elementResistances:
   - 0
   - 0
-  - 0
   - 0.05
+  - 0
   - 0
   - 0
   exp: 10
   dropItemID: 
+  searchDis: 10
+  attackRange: 3

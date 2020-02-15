@@ -26,10 +26,15 @@ public class EnemyData : ScriptableObject
     public float moveSpeed;
     [Header("碰撞傷害:")]
     public float touchDamage; 
-    [Header("抗性:"),Range(-2,1),Tooltip("抗性依序為 0 = 火、1 = 水、2 = 風、3 = 地、4 = 光、5 = 暗。(PS:數值 1 = 100%)")]
+    [Header("抗性:"),Range(-2,1),Tooltip("抗性依序為 0 = 水、1 = 火、2 = 地、3 = 風、4 = 光、5 = 暗。(PS:數值 1 = 100%)")]
     public float[] elementResistances = new float[6];
     [Header("經驗值:")]
     public float exp;
     [Header("掉落物:"), Tooltip("此處為物品ID。")]
     public int[] dropItemID;
+
+    [Header("索敵距離:")]
+    public float searchDis;
+    [Header("攻擊範圍:")]
+    public float attackRange;
 }

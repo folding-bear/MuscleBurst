@@ -67,7 +67,7 @@ public class PlayerBasicAction : MonoBehaviour
         
         Idle();    
         Jump();
-        
+        Dodge();
 
     }
     private void OnCollisionEnter2D(Collision2D collision)
@@ -284,27 +284,82 @@ public class PlayerBasicAction : MonoBehaviour
     private void Jump()
     {
         #region PC
-        //if (Input.GetKeyDown(KeyCode.W) && !jumping)
-        //{
+        if (Input.GetKeyDown(KeyCode.Space) && canJumpDown && platform != null)//平台下躍判定
+        {
+            platform.isTrigger = true;
+            //Debug.Log("1");
+            animator.SetBool("落下", true);
+            SoleShow();
+            Invoke("EndJumpDown", 0.5f);
 
-        //    animator.SetBool("跳躍", true);
-        //    jumping = true;
-        //    rd2D.AddForce(transform.up * maxJumpPower, ForceMode2D.Impulse);
+        }
+        else if (Input.GetKeyDown(KeyCode.Space) && !jumping)
+        {
 
-        //}
-        //else if (Input.GetKey(KeyCode.W) && jumping && !maxHeight)
-        //{
+            if (controlLock || animator.GetBool("蹲下")) return;
+            actionLock = true;
+            /// 2019/12/21 20-22 by wen
+            jumping = true;
+            starthigh = rd2D.transform.position.y; //紀錄起跳位置
+            nowhigh = starthigh; //紀錄當前高度
+            jumphigh = 0; //紀錄跳躍高度
+            ///
+            Fighting(1);
+            if (state != 0) return;
 
-        //    if (rd2D.velocity.y > maxHigh)
-        //    {
-        //        maxHeight = true;
-        //    }
-        //    rd2D.AddForce(transform.up * minJumpPower, ForceMode2D.Impulse);
-        //}
-        //if (Input.GetKeyUp(KeyCode.W))
-        //{
-        //    maxHeight = true;
-        //}
+            animator.SetBool("跳躍", true);
+
+            Invoke("SoleShow", 0.2f);
+            //rd2D.gravityScale = 0;
+            //if(!animator.GetBool("跳躍")) 
+
+            rd2D.velocity = transform.up * maxJumpPower;
+            //animator.SetBool("落下", true);
+            //rd2D.AddForce(transform.up * maxJumpPower, ForceMode2D.Impulse);
+
+        }
+        else if (Input.GetKey(KeyCode.Space) && jumping && !maxHeight)
+        {
+            //if (rd2D.velocity.y > maxHigh|| rd2D.velocity.y <0)
+            //{
+            //    maxHeight = true;
+            //}
+            nowhigh = rd2D.transform.position.y; //紀錄當前高度
+            jumphigh = nowhigh - starthigh; //紀錄跳躍高度
+
+            //rd2D.gravityScale = 0;
+
+            //if (jumphigh >= maxHigh )
+            //{
+            //    maxHeight = true;
+
+            //    rd2D.gravityScale = 10;
+            //    //Debug.Log("2");
+            //    animator.SetBool("落下", true);
+            //}
+
+            rd2D.velocity = transform.up * maxJumpPower;
+            //rd2D.velocity += Vector2.up * minJumpPower;
+            //rd2D.AddForce(transform.up * minJumpPower, ForceMode2D.Impulse);  
+        }
+        if (Input.GetKeyUp(KeyCode.Space) && jumping)
+        {
+            maxHeight = true;
+
+            rd2D.gravityScale = 10;
+            //Debug.Log("3");
+            //animator.SetBool("跳躍", false);
+        }
+
+        //放到外面-----------------------------------------
+        nowhigh = rd2D.transform.position.y; //紀錄當前高度
+        jumphigh = nowhigh - starthigh; //紀錄跳躍高度
+        if ((jumphigh > maxHigh || rd2D.velocity.y < 0) && jumping)
+        {
+            maxHeight = true;
+            //Debug.Log("4");
+            //animator.SetBool("跳躍", false);
+        }
         #endregion
     }
     /// <summary>
@@ -377,18 +432,24 @@ public class PlayerBasicAction : MonoBehaviour
     public void Dodge()
     {
         if (controlLock || actionLock|| jumping) return;
-        controlLock = true;
-        state = 2;
-        animator.SetTrigger("閃躲");
-  
-        if (transform.localScale.x > 0 || Input.GetKey(KeyCode.D)) 
+        
+
+        if (Input.GetKeyDown(KeyCode.L))
         {
-            rd2D.AddForceAtPosition(transform.right * dodgeDis, transform.position,ForceMode2D.Impulse);
+            controlLock = true;
+            state = 2;
+            animator.SetTrigger("閃躲");
+
+            if (transform.localScale.x > 0 || Input.GetKey(KeyCode.D))
+            {
+                rd2D.AddForceAtPosition(transform.right * dodgeDis, transform.position, ForceMode2D.Impulse);
+            }
+            else if (transform.localScale.x < 0 || Input.GetKey(KeyCode.A))
+            {
+                rd2D.AddForceAtPosition(-transform.right * dodgeDis, transform.position, ForceMode2D.Impulse);
+            }
         }
-        else if(transform.localScale.x < 0 || Input.GetKey(KeyCode.A))
-        {
-            rd2D.AddForceAtPosition(-transform.right * dodgeDis, transform.position,ForceMode2D.Impulse);
-        }
+        
     }
     #endregion
     #region 控制開關
