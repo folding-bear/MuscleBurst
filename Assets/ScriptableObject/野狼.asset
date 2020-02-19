@@ -20,7 +20,7 @@ MonoBehaviour:
   attack: 10
   defense: 10
   attackRate: 1
-  moveSpeed: 1.5
+  moveSpeed: 1.2
   touchDamage: 10
   elementResistances:
   - 0
@@ -31,5 +31,7 @@ MonoBehaviour:
   - 0
   exp: 10
   dropItemID: 
-  searchDis: 10
-  attackRange: 3
+  reactionTime: 1.5
+  alertRange: 15
+  patrolRange: 7.5
+  attackRange: 5

@@ -143,7 +143,7 @@ public class PlayerBasicAction : MonoBehaviour
             animator.SetBool("跑步", true);
             transform.Translate(transform.right * speed);
             //rd2D.AddForce(transform.right * speed);
-            transform.localScale = new Vector2(lookX, 0.25f);//角色面向右
+            transform.localScale = new Vector2(lookX, transform.localScale.y);//角色面向右
         }
         if (Input.GetKey(KeyCode.A))
         {
@@ -151,7 +151,7 @@ public class PlayerBasicAction : MonoBehaviour
             animator.SetBool("跑步", true);
             transform.Translate(transform.right * -speed);
             //rd2D.AddForce(transform.right * -speed);
-            transform.localScale = new Vector2(-lookX, 0.25f);//角色面向左
+            transform.localScale = new Vector2(-lookX, transform.localScale.y);//角色面向左
         }
        
     }
@@ -162,8 +162,8 @@ public class PlayerBasicAction : MonoBehaviour
         {
             animator.SetBool("蹲下", true);
             moveLock = true;
-            if (Input.GetKey(KeyCode.D)) transform.localScale = new Vector2(lookX, 0.25f);//角色面向右;
-            else if (Input.GetKey(KeyCode.A)) transform.localScale = new Vector2(-lookX, 0.25f);//角色面向左
+            if (Input.GetKey(KeyCode.D)) transform.localScale = new Vector2(lookX, transform.localScale.y);//角色面向右;
+            else if (Input.GetKey(KeyCode.A)) transform.localScale = new Vector2(-lookX, transform.localScale.y);//角色面向左
         }   
         else if (Input.GetKey(KeyCode.S))
         {
@@ -172,8 +172,8 @@ public class PlayerBasicAction : MonoBehaviour
             Fighting(1);
             moveLock = true;
             
-            if (Input.GetKey(KeyCode.D)) transform.localScale = new Vector2(lookX, 0.25f);//角色面向右;
-            else if (Input.GetKey(KeyCode.A)) transform.localScale = new Vector2(-lookX, 0.25f);//角色面向左
+            if (Input.GetKey(KeyCode.D)) transform.localScale = new Vector2(lookX, transform.localScale.y);//角色面向右;
+            else if (Input.GetKey(KeyCode.A)) transform.localScale = new Vector2(-lookX, transform.localScale.y);//角色面向左
         }
 
         else if (Input.GetKeyUp(KeyCode.S) || !squat)

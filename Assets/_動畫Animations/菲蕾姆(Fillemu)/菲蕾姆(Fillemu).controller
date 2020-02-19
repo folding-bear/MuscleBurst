@@ -264,6 +264,9 @@ AnimatorStateTransition:
   - m_ConditionMode: 1
     m_ConditionEvent: "\u8F15\u62F3"
     m_EventTreshold: 0
+  - m_ConditionMode: 2
+    m_ConditionEvent: "\u8DF3\u8E8D"
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 7444872983149462047}
   m_Solo: 0
@@ -1335,6 +1338,9 @@ AnimatorStateTransition:
   m_Conditions:
   - m_ConditionMode: 1
     m_ConditionEvent: "\u8F15\u62F3"
+    m_EventTreshold: 0
+  - m_ConditionMode: 2
+    m_ConditionEvent: "\u8DF3\u8E8D"
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 7444872983149462047}

@@ -8,18 +8,21 @@ public class GameManager : MonoBehaviour
     private bool slowMotion;
     [Header("撥放速度:"), SerializeField]
     private float playSpeed;
+  
 
     void Start()
     {
         
     }
 
-   
+
     void Update()
     {
         if (slowMotion)
         {
-          Time.timeScale = playSpeed;
+            Time.timeScale = playSpeed;
         }
-    }
+       
+    }  
+   
 }

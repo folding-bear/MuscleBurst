@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 [CreateAssetMenu(fileName ="敵人資料",menuName ="自訂/敵人資料")]
 public class EnemyData : ScriptableObject
 {
@@ -20,9 +21,9 @@ public class EnemyData : ScriptableObject
     public float attack;
     [Header("防禦:")]
     public float defense;
-    [Header("攻擊速度:")]
+    [Header("攻擊間隔:")]
     public float attackRate;
-    [Header("移動速度:")]
+    [Header("移動速度:"),Tooltip("")]
     public float moveSpeed;
     [Header("碰撞傷害:")]
     public float touchDamage; 
@@ -33,8 +34,12 @@ public class EnemyData : ScriptableObject
     [Header("掉落物:"), Tooltip("此處為物品ID。")]
     public int[] dropItemID;
 
-    [Header("索敵距離:")]
-    public float searchDis;
+    [Header("反應時間:")]
+    public float reactionTime;
+    [Header("警戒範圍:")]
+    public float alertRange;
+    [Header("巡邏範圍:"),Tooltip("")]
+    public float patrolRange;
     [Header("攻擊範圍:")]
     public float attackRange;
 }
