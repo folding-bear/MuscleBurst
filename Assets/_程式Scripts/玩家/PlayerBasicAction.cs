@@ -19,6 +19,9 @@ public class PlayerBasicAction : MonoBehaviour
     private float dodgeDis;
     #endregion
 
+    public KeyCode up,down,left,right;
+   
+
     #region 面板隱藏的區域變數
     //[Header("腳底Transform:"), SerializeField]
     private Transform buttomPos;
@@ -37,6 +40,13 @@ public class PlayerBasicAction : MonoBehaviour
     #endregion
 
     #region 內建方法
+    private void Awake()
+    {
+        up = KeyCode.W;
+        down = KeyCode.S;
+        left = KeyCode.A;
+        right = KeyCode.D;
+    }
     void Start()
     {
         lookX = transform.localScale.x;//存取自身的scale
@@ -44,6 +54,7 @@ public class PlayerBasicAction : MonoBehaviour
         rd2D = GetComponent<Rigidbody2D>();//存取Rigidbody2D
         buttomPos = transform.GetChild(5).GetComponent<BoxCollider2D>().transform;
         sole = transform.GetChild(5).GetComponent<BoxCollider2D>();
+        
     }
     
     void Update()
@@ -137,7 +148,7 @@ public class PlayerBasicAction : MonoBehaviour
     private void Move()
     {
         if (moveLock || squat) return;
-        if (Input.GetKey(KeyCode.D))
+        if (Input.GetKey(right))
         {
             Fighting(1);
             animator.SetBool("跑步", true);
@@ -145,7 +156,7 @@ public class PlayerBasicAction : MonoBehaviour
             //rd2D.AddForce(transform.right * speed);
             transform.localScale = new Vector2(lookX, transform.localScale.y);//角色面向右
         }
-        if (Input.GetKey(KeyCode.A))
+        if (Input.GetKey(left))
         {
             Fighting(1);
             animator.SetBool("跑步", true);
@@ -165,18 +176,18 @@ public class PlayerBasicAction : MonoBehaviour
             if (Input.GetKey(KeyCode.D)) transform.localScale = new Vector2(lookX, transform.localScale.y);//角色面向右;
             else if (Input.GetKey(KeyCode.A)) transform.localScale = new Vector2(-lookX, transform.localScale.y);//角色面向左
         }   
-        else if (Input.GetKey(KeyCode.S))
+        else if (Input.GetKey(down))
         {
             if (controlLock || actionLock) return;
             animator.SetBool("蹲下", true);
             Fighting(1);
             moveLock = true;
             
-            if (Input.GetKey(KeyCode.D)) transform.localScale = new Vector2(lookX, transform.localScale.y);//角色面向右;
-            else if (Input.GetKey(KeyCode.A)) transform.localScale = new Vector2(-lookX, transform.localScale.y);//角色面向左
+            if (Input.GetKey(right)) transform.localScale = new Vector2(lookX, transform.localScale.y);//角色面向右;
+            else if (Input.GetKey(left)) transform.localScale = new Vector2(-lookX, transform.localScale.y);//角色面向左
         }
 
-        else if (Input.GetKeyUp(KeyCode.S) || !squat)
+        else if (Input.GetKeyUp(down) || !squat)
         {
             if (state > 0) 
             {
@@ -440,11 +451,11 @@ public class PlayerBasicAction : MonoBehaviour
             state = 2;
             animator.SetTrigger("閃躲");
 
-            if (transform.localScale.x > 0 || Input.GetKey(KeyCode.D))
+            if (transform.localScale.x > 0 || Input.GetKey(right))
             {
                 rd2D.AddForceAtPosition(transform.right * dodgeDis, transform.position, ForceMode2D.Impulse);
             }
-            else if (transform.localScale.x < 0 || Input.GetKey(KeyCode.A))
+            else if (transform.localScale.x < 0 || Input.GetKey(left))
             {
                 rd2D.AddForceAtPosition(-transform.right * dodgeDis, transform.position, ForceMode2D.Impulse);
             }
